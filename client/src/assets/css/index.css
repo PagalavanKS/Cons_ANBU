@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    padding: 0px;
+    margin: 0px;
+    font-family:'Poppins';
+}
+.active{
+   
+  background-color: white;
+  color:black;
+  border-radius: 35px;
+  padding: 10px;
+  /* border-width: 10vw; */
+
+}
