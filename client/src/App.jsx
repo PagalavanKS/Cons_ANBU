@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './index.css'; // Import Tailwind CSS
-import './App.css'; // Import backup CSS
+import './index.css'; // Import base CSS with variables and utility classes
+import './App.css';    // Import component-specific styling
 import Home from './pages/Home';
 import Invoicelist from './components/Invoicelist';
 import Invoiceform from './components/Invoiceform';

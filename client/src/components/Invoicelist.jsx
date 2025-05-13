@@ -57,71 +57,70 @@ const Invoicelist = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="invoice-container">
       <Sidebar />
       
-      <div className="flex-1 p-8">
+      <div className="invoice-content">
         {/* Add Invoice Button */}
-        <Link to="/form">
-          <div className="flex items-center justify-center w-[12vw] py-3 px-5 rounded-lg bg-gradient-to-r from-blue-800 to-indigo-900 text-white font-semibold shadow-md hover:shadow-lg transform transition-all duration-300 hover:scale-105">
-            + Add Invoice
-          </div>
+        <Link to="/form" className="add-invoice-button">
+          + Add Invoice
         </Link>
 
         {/* Invoice Table */}
-        <div className="bg-white shadow-lg rounded-lg mt-6 overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-indigo-900 text-white">
+        <div className="invoice-table-container">
+          <table className="invoice-table">
+            <thead className="invoice-table-header">
               <tr>
-                <th className="p-4 text-left">#</th>
-                <th className="p-4 text-left">Date</th>
-                <th className="p-4 text-left">Customer Name</th>
-                <th className="p-4 text-left">Grand Total</th>
-                <th className="p-4 text-left">Actions</th>
+                <th className="invoice-table-cell">#</th>
+                <th className="invoice-table-cell">Date</th>
+                <th className="invoice-table-cell">Customer Name</th>
+                <th className="invoice-table-cell">Grand Total</th>
+                <th className="invoice-table-cell">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {invoicedata.map((value, index) => (
-                <tr key={value._id} className="border-b hover:bg-gray-50 transition-all duration-200">
-                  <td className="p-4">{index + 1}</td>
-                  <td className="p-4">{value.date}</td>
-                  <td className="p-4 font-medium text-gray-800">{value.customername}</td>
-                  <td className="p-4 text-green-600 font-semibold">₹{value.grandtotal.toFixed(2)}</td>
-                  <td className="p-4 flex gap-3">
-                    <button
-                      onClick={() => handleEdit(value._id)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition-all"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(value._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition-all"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handlePreview(value._id)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition-all"
-                    >
-                      Print
-                    </button>
+              {Array.isArray(invoicedata) ? invoicedata.map((value, index) => (
+                <tr key={value._id} className="invoice-table-row">
+                  <td className="invoice-table-cell">{index + 1}</td>
+                  <td className="invoice-table-cell">{value.date}</td>
+                  <td className="invoice-table-cell invoice-customer">{value.customername}</td>
+                  <td className="invoice-table-cell invoice-amount">₹{value.grandtotal.toFixed(2)}</td>
+                  <td className="invoice-table-cell">
+                    <div className="invoice-actions">
+                      <button
+                        onClick={() => handleEdit(value._id)}
+                        className="invoice-action-button invoice-action-edit"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(value._id)}
+                        className="invoice-action-button invoice-action-delete"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        onClick={() => handlePreview(value._id)}
+                        className="invoice-action-button invoice-action-print"
+                      >
+                        Print
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              )) : <tr><td colSpan="5" className="invoice-table-cell">No data available</td></tr>}
             </tbody>
           </table>
         </div>
 
         {/* PDF Preview Modal */}
         {showPreview && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white rounded-lg shadow-2xl w-[80%] h-[90%] relative p-6 flex flex-col">
-              
+          <div className="modal-overlay">
+            <div className="modal-container">
               {/* Close Button */}
               <button
                 onClick={() => setShowPreview(false)}
-                className="absolute top-4 right-4 text-white bg-red-500 px-3 py-2 rounded-full shadow-md hover:bg-red-600 transition-all"
+                className="modal-close-button"
               >
                 ✕
               </button>
@@ -130,7 +129,7 @@ const Invoicelist = () => {
               <iframe
                 src={pdfPreviewUrl}
                 title="PDF Preview"
-                className="w-full h-full border rounded-lg"
+                className="modal-iframe"
               ></iframe>
             </div>
           </div>

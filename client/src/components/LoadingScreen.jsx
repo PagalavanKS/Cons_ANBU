@@ -14,20 +14,20 @@ function LoadingScreen() {
   if (!show) return null;
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden">
-      <div className="relative">
+    <div className="loading-screen">
+      <div className="loading-container">
         {/* Background glow effect */}
-        <div className="absolute inset-0 bg-brand-primary/20 filter blur-3xl scale-150 animate-pulse"></div>
+        <div className="loading-background-glow"></div>
         
         {/* Main text */}
-        <h1 className="text-brand-primary text-7xl font-bold tracking-wider relative animate-scale-in drop-shadow-lg">
+        <h1 className="loading-title">
           ANBU PRINTING PRESS
         </h1>
 
         {/* Loading line */}
-        <div className="absolute -bottom-8 left-0 right-0 flex justify-center">
-          <div className="h-[2px] w-32 bg-brand-secondary/50 relative overflow-hidden rounded-full">
-            <div className="h-full w-8 bg-brand-primary absolute animate-loading-bounce rounded-full"></div>
+        <div className="loading-line-container">
+          <div className="loading-line">
+            <div className="loading-line-indicator"></div>
           </div>
         </div>
       </div>

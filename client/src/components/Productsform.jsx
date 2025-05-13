@@ -64,7 +64,6 @@ const ProductManagement = () => {
       } else {
         // Create new product
         await addProduct(productData);
-       // console.log(productData)
         alert('Product added successfully');
       }
       
@@ -117,104 +116,104 @@ const ProductManagement = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="product-management-container">
       <Sidebar />
       
-      <div className="flex-1 p-8">
-        <h1 className="text-2xl font-bold mb-6">Product Management</h1>
+      <div className="product-management-content">
+        <h1 className="product-management-title">Product Management</h1>
         
         {/* Error Message */}
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="form-error-container">
+            <p>{error}</p>
           </div>
         )}
         
         {/* Product Form */}
-        <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className="product-form-container">
+          <h2 className="product-form-title">
             {editMode ? 'Edit Product' : 'Add New Product'}
           </h2>
           <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block mb-1">Product Name*</label>
+            <div className="product-form-grid">
+              <div className="product-form-field">
+                <label className="product-form-label">Product Name*</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="product-form-input"
                   required
                 />
               </div>
               
-              <div>
-                <label className="block mb-1">Price*</label>
+              <div className="product-form-field">
+                <label className="product-form-label">Price*</label>
                 <input
                   type="number"
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="product-form-input"
                   step="0.01"
                   required
                 />
               </div>
               
-              <div>
-                <label className="block mb-1">GST Percentage</label>
+              <div className="product-form-field">
+                <label className="product-form-label">GST Percentage</label>
                 <input
                   type="number"
                   name="gstpercent"
                   value={formData.gstpercent}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="product-form-input"
                   step="0.01"
                 />
               </div>
               
-              <div>
-                <label className="block mb-1">Available Stock*</label>
+              <div className="product-form-field">
+                <label className="product-form-label">Available Stock*</label>
                 <input
                   type="number"
                   name="availablestock"
                   value={formData.availablestock}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="product-form-input"
                   required
                 />
               </div>
               
-              <div>
-                <label className="block mb-1">Unit</label>
+              <div className="product-form-field">
+                <label className="product-form-label">Unit</label>
                 <select
                   name="unit"
                   value={formData.unit}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="product-form-input"
                 >
                   <option value="G">Count</option>
                   <option value="KG">KG</option>
                 </select>
               </div>
               
-              <div className="md:col-span-2">
-                <label className="block mb-1">Description</label>
+              <div className="product-form-field product-form-grid-full">
+                <label className="product-form-label">Description</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full p-2 border rounded"
+                  className="product-form-input"
                   rows="3"
                 ></textarea>
               </div>
             </div>
             
-            <div className="mt-4 flex space-x-2">
+            <div className="product-form-actions">
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition-all"
+                className="btn btn-primary"
               >
                 {editMode ? 'Update Product' : 'Add Product'}
               </button>
@@ -223,7 +222,7 @@ const ProductManagement = () => {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-600 transition-all"
+                  className="btn btn-secondary"
                 >
                   Cancel
                 </button>
@@ -233,54 +232,56 @@ const ProductManagement = () => {
         </div>
         
         {/* Product List */}
-        <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
+        <div className="product-table-container">
           {loading ? (
-            <div className="p-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-              <p className="mt-2">Loading products...</p>
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p className="loading-text">Loading products...</p>
             </div>
           ) : (
-            <table className="min-w-full">
-              <thead className="bg-indigo-900 text-white">
+            <table className="product-table">
+              <thead className="product-table-header">
                 <tr>
-                  <th className="p-4 text-left">#</th>
-                  <th className="p-4 text-left">Product Name</th>
-                  <th className="p-4 text-left">Price</th>
-                  <th className="p-4 text-left">GST %</th>
-                  <th className="p-4 text-left">Stock</th>
-                  <th className="p-4 text-left">Unit</th>
-                  <th className="p-4 text-left">Actions</th>
+                  <th className="product-table-cell">#</th>
+                  <th className="product-table-cell">Product Name</th>
+                  <th className="product-table-cell">Price</th>
+                  <th className="product-table-cell">GST %</th>
+                  <th className="product-table-cell">Stock</th>
+                  <th className="product-table-cell">Unit</th>
+                  <th className="product-table-cell">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {products.length > 0 ? (
                   products.map((product, index) => (
-                    <tr key={product._id} className="border-b hover:bg-gray-50 transition-all duration-200">
-                      <td className="p-4">{index + 1}</td>
-                      <td className="p-4 font-medium text-gray-800">{product.name}</td>
-                      <td className="p-4 text-green-600 font-semibold">₹{product.price.toFixed(2)}</td>
-                      <td className="p-4">{product.gstpercent}%</td>
-                      <td className="p-4">{product.availablestock}</td>
-                      <td className="p-4">{product.unit}</td>
-                      <td className="p-4 flex gap-2">
-                        <button
-                          onClick={() => handleEdit(product)}
-                          className="bg-blue-600 text-white px-3 py-1 rounded-lg shadow hover:bg-blue-700 transition-all"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product._id)}
-                          className="bg-red-500 text-white px-3 py-1 rounded-lg shadow hover:bg-red-600 transition-all"
-                        >
-                          Delete
-                        </button>
+                    <tr key={product._id} className="product-row">
+                      <td className="product-table-cell">{index + 1}</td>
+                      <td className="product-table-cell">{product.name}</td>
+                      <td className="product-table-cell invoice-amount">₹{product.price.toFixed(2)}</td>
+                      <td className="product-table-cell">{product.gstpercent}%</td>
+                      <td className="product-table-cell">{product.availablestock}</td>
+                      <td className="product-table-cell">{product.unit}</td>
+                      <td className="product-table-cell">
+                        <div className="product-actions">
+                          <button
+                            onClick={() => handleEdit(product)}
+                            className="btn btn-primary"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(product._id)}
+                            className="btn btn-danger"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="py-8 px-4 text-center text-gray-500">
+                    <td colSpan="7" className="product-table-cell empty-message">
                       No products found. Add some products to get started.
                     </td>
                   </tr>

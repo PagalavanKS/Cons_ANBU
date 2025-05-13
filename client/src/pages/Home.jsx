@@ -4,50 +4,49 @@ import Sidebar from "../components/Sidebar";
 
 const Home = () => {
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-gray-100 to-gray-200">
+    <div className="home-container">
       <Sidebar />
 
-      <div className="flex-1 overflow-auto p-8">
+      <div className="home-content">
         {/* Hero Section */}
-        <div className="relative w-full h-[50vh] flex flex-col justify-center items-center text-center bg-[url('https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&q=80')] bg-cover bg-center rounded-3xl overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-indigo-900/70 backdrop-blur-[2px]" />
-          <div className="relative z-10 px-6">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Award className="w-12 h-12 text-yellow-400" />
-              <h1 className="text-6xl font-extrabold text-white tracking-wide">
+        <div className="home-hero" style={{backgroundImage: "url('https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&q=80')"}}>
+          <div className="home-hero-overlay"></div>
+          <div className="home-hero-content">
+            <div className="home-hero-title-container">
+              <Award className="home-hero-icon" style={{width: '3rem', height: '3rem', color: '#facc15'}} />
+              <h1 className="home-hero-title">
                 Anbu Printing Press
               </h1>
             </div>
-            <p className="text-2xl text-white/90 max-w-3xl mx-auto font-light mb-4">
+            <p className="home-hero-subtitle">
               Crafting Your Media Today
             </p>
-            <p className="text-white/80 text-lg italic">
+            <p className="home-hero-address">
               45/7, Salem MainRoad, Kaveripattinam, Krishnagiri- 635112
             </p>
           </div>
         </div>
 
         {/* Vision Statement */}
-        <div className="mt-12 text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Vision</h2>
-          <p className="text-xl text-gray-600 leading-relaxed">
+        <div className="home-section">
+          <h2 className="home-section-title">Our Vision</h2>
+          <p className="home-section-content">
             To revolutionize the textile industry through innovation, sustainability, and excellence, 
             while maintaining our commitment to quality and customer satisfaction.
           </p>
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
+        <div className="home-stats-grid">
           {statistics.map((stat, index) => (
-            <div key={index} 
-              className="bg-white/80 backdrop-blur p-6 rounded-xl shadow-lg border border-gray-200">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-indigo-100 rounded-lg">
-                  <stat.icon className="w-8 h-8 text-indigo-600" />
+            <div key={index} className="home-stat-card">
+              <div className="home-stat-content">
+                <div className="home-stat-icon-container">
+                  <stat.icon style={{width: '2rem', height: '2rem', color: 'var(--indigo-600)'}} />
                 </div>
                 <div>
-                  <h3 className="text-3xl font-bold text-gray-800">{stat.value}</h3>
-                  <p className="text-sm text-gray-600">{stat.label}</p>
+                  <h3 className="home-stat-value">{stat.value}</h3>
+                  <p className="home-stat-label">{stat.label}</p>
                 </div>
               </div>
             </div>
@@ -55,31 +54,28 @@ const Home = () => {
         </div>
 
         {/* Core Values */}
-        <div className="mt-16">
-          <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Our Core Values</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="home-section">
+          <h2 className="home-section-title">Our Core Values</h2>
+          <div className="home-cards-grid">
             {coreValues.map((value, index) => (
-              <div key={index} className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
-                <value.icon className="w-12 h-12 text-indigo-600 mb-4" />
-                <h3 className="text-xl font-semibold mb-3">{value.title}</h3>
-                <p className="text-gray-600">{value.description}</p>
+              <div key={index} className="home-card">
+                <value.icon style={{width: '3rem', height: '3rem', color: 'var(--indigo-600)', marginBottom: '1rem'}} />
+                <h3 className="home-card-title">{value.title}</h3>
+                <p className="home-card-description">{value.description}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        <div className="home-cards-grid">
           {features.map((feature, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center justify-center p-8 bg-white rounded-xl border border-gray-200 shadow-lg"
-            >
-              <feature.icon className="w-16 h-16 mb-6 text-indigo-600" />
-              <h3 className="text-2xl font-semibold mb-3">
+            <div key={index} className="home-card">
+              <feature.icon style={{width: '4rem', height: '4rem', color: 'var(--indigo-600)', marginBottom: '1.5rem'}} />
+              <h3 className="home-card-title">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 text-center">
+              <p className="home-card-description">
                 {feature.description}
               </p>
             </div>

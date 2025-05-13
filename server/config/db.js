@@ -18,7 +18,7 @@ const connectdb = async (mongoUrl) => {
   } catch (err) {
     console.error("Connection Failed:", err);
     process.exit(1);
-  }
+  } 
 };
 
 module.exports = connectdb;

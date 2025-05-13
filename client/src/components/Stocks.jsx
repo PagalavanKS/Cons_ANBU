@@ -3,17 +3,17 @@ import Sidebar from './Sidebar';
 
 const Stocks = () => {
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="page-container">
         {/* Sidebar */}
         <Sidebar />
         
         {/* Main Content */}
-        <div className="flex-1 flex items-center justify-center p-10">
-            <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8 text-center">
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">📦 Stocks Management</h2>
-                <p className="text-gray-600 text-lg">This section is currently under development. Stay tuned!</p>
-                <div className="mt-6">
-                    <button className="bg-blue-600 text-white px-6 py-2 rounded-lg text-lg font-semibold shadow-md hover:bg-blue-700 transition duration-300">
+        <div className="main-content center-content">
+            <div className="stock-card">
+                <h2 className="stock-title">📦 Stocks Management</h2>
+                <p className="stock-description">This section is currently under development. Stay tuned!</p>
+                <div className="stock-action">
+                    <button className="btn btn-primary">
                         View Inventory
                     </button>
                 </div>

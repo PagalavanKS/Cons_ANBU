@@ -14,9 +14,6 @@ export default defineConfig({
       }
     }
   },
-  css: {
-    postcss: './postcss.config.js',
-  },
   build: {
     cssCodeSplit: true,
     sourcemap: true,
