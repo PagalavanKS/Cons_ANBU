@@ -3,10 +3,8 @@ const mongoose = require('mongoose');
 
 const connectdb = async (mongoUrl) => {
   try {
-    await mongoose.connect(mongoUrl, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // Remove deprecated options
+    await mongoose.connect(mongoUrl);
 
     const connection = mongoose.connection;
     connection.on('connected', () => {
