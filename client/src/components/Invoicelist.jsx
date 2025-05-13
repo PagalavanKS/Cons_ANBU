@@ -7,6 +7,7 @@ const Invoicelist = () => {
   const [invoicedata, setInvoice] = useState([]);
   const [showPreview, setShowPreview] = useState(false);
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -41,14 +42,38 @@ const Invoicelist = () => {
 
   const handlePreview = async (id) => {
     try {
+      setLoading(true); // Add loading state to show user something is happening
+      
       const { data } = await genpdf(id);
+      
+      if (!data || !data.pdfPath) {
+        throw new Error('Invalid response from server');
+      }
+      
       const pdfUrl = `${import.meta.env.VITE_API || 'http://localhost:5000'}${data.pdfPath}`;
+      
+      // Verify that URL is valid
+      console.log('PDF URL:', pdfUrl);
       
       setPdfPreviewUrl(pdfUrl);
       setShowPreview(true);
     } catch (error) {
       console.error("Error generating PDF:", error);
-      alert("An error occurred while generating the PDF. Please try again.");
+      
+      // More descriptive error message
+      let errorMessage = "An error occurred while generating the PDF.";
+      
+      if (error.response) {
+        // Server returned an error response
+        errorMessage += ` Server says: ${error.response.data.error || 'Unknown server error'}`;
+      } else if (error.request) {
+        // Server didn't respond
+        errorMessage += " Server is not responding. Please try again later.";
+      }
+      
+      alert(errorMessage);
+    } finally {
+      setLoading(false); // Ensure loading state is cleared
     }
   };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { addinvoice, editinvoice } from '../services/api';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from '../utils/config.js';
+import Sidebar from './Sidebar';
 
 const Invoiceform = () => {
   const navigate = useNavigate();
@@ -364,237 +365,224 @@ const Invoiceform = () => {
   
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center p-8">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-opacity-75 mx-auto mb-4"></div>
-          <p className="text-lg text-gray-600">Loading invoice data...</p>
+      <div className="loading-wrapper">
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p className="loading-text">Loading invoice data...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={handleback}
-            className="bg-white text-blue-600 px-5 py-2 rounded-lg shadow-md hover:bg-blue-50 border border-blue-200 transition duration-200 flex items-center"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    <div className="invoice-form-container">
+      <Sidebar />
+      
+      <div className="invoice-form-content">
+        {/* Header with back button */}
+        <div className="invoice-form-header-container">
+          <button onClick={handleback} className="back-button">
+            <svg className="back-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Back to List
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="invoice-form-title">
             {isEdit ? 'Update Invoice' : 'Create New Invoice'}
           </h1>
         </div>
+        
         {/* Main Form Content */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <div className="invoice-form-panel">
           {/* Form Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 py-4 px-6">
-            <h2 className="text-xl font-semibold text-white">
+          <div className="invoice-panel-header">
+            <h2 className="invoice-panel-header-title">
               {isEdit ? 'Edit Existing Invoice' : 'New Invoice Details'}
             </h2>
-            <p className="text-blue-100 text-sm">
+            <p className="invoice-panel-header-subtitle">
               Fill in all required fields marked with an asterisk (*)
             </p>
           </div>
+          
           {/* Customer Details */}
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <div className="invoice-section">
+            <h3 className="invoice-section-title">
+              <svg className="section-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
               </svg>
               Customer Information
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Customer Name*
-                </label>
+            <div className="invoice-form-grid">
+              <div className="invoice-form-group">
+                <label className="invoice-label">Customer Name*</label>
                 <input
                   type="text"
                   placeholder="Full Name"
                   value={invoiceDetails.customername}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customername: e.target.value })}
-                  className={`border ${formErrors.customername ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200`}
+                  className={`invoice-input ${formErrors.customername ? 'invoice-input-error' : ''}`}
                   required
                 />
                 {formErrors.customername && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.customername}</p>
+                  <p className="invoice-error-message">{formErrors.customername}</p>
                 )}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number*
-                </label>
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">Phone Number*</label>
                 <input
                   type="tel"
                   placeholder="Phone Number"
                   value={invoiceDetails.customerphone}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customerphone: e.target.value })}
-                  className={`border ${formErrors.customerphone ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200`}
+                  className={`invoice-input ${formErrors.customerphone ? 'invoice-input-error' : ''}`}
                   required
                 />
                 {formErrors.customerphone && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.customerphone}</p>
+                  <p className="invoice-error-message">{formErrors.customerphone}</p>
                 )}
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">Email</label>
                 <input
                   type="email"
                   placeholder="Email Address"
                   value={invoiceDetails.customeremail}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customeremail: e.target.value })}
-                  className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
+                  className="invoice-input"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  GST Number
-                </label>
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">GST Number</label>
                 <input
                   type="text"
                   placeholder="GST Number (if applicable)"
                   value={invoiceDetails.customergst}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customergst: e.target.value })}
-                  className="border border-gray-300 p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
+                  className="invoice-input"
                 />
               </div>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address*
-              </label>
-              <input
-                type="text"
-                placeholder="Street Address"
-                value={invoiceDetails.customeraddress}
-                onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customeraddress: e.target.value })}
-                className={`border ${formErrors.customeraddress ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200`}
-                required
-              />
-              {formErrors.customeraddress && (
-                <p className="text-red-500 text-xs mt-1">{formErrors.customeraddress}</p>
-              )}
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  City*
-                </label>
+              
+              <div className="invoice-form-group full-width">
+                <label className="invoice-label">Address*</label>
+                <input
+                  type="text"
+                  placeholder="Street Address"
+                  value={invoiceDetails.customeraddress}
+                  onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customeraddress: e.target.value })}
+                  className={`invoice-input ${formErrors.customeraddress ? 'invoice-input-error' : ''}`}
+                  required
+                />
+                {formErrors.customeraddress && (
+                  <p className="invoice-error-message">{formErrors.customeraddress}</p>
+                )}
+              </div>
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">City*</label>
                 <input
                   type="text"
                   placeholder="City"
                   value={invoiceDetails.customercity}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customercity: e.target.value })}
-                  className={`border ${formErrors.customercity ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200`}
+                  className={`invoice-input ${formErrors.customercity ? 'invoice-input-error' : ''}`}
                   required
                 />
                 {formErrors.customercity && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.customercity}</p>
+                  <p className="invoice-error-message">{formErrors.customercity}</p>
                 )}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  State*
-                </label>
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">State*</label>
                 <input
                   type="text"
                   placeholder="State"
                   value={invoiceDetails.customerstate}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customerstate: e.target.value })}
-                  className={`border ${formErrors.customerstate ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200`}
+                  className={`invoice-input ${formErrors.customerstate ? 'invoice-input-error' : ''}`}
                   required
                 />
                 {formErrors.customerstate && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.customerstate}</p>
+                  <p className="invoice-error-message">{formErrors.customerstate}</p>
                 )}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Pincode*
-                </label>
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">Pincode*</label>
                 <input
                   type="text"
                   placeholder="Pincode"
                   value={invoiceDetails.customerpincode}
                   onChange={(e) => setInvoiceDetails({ ...invoiceDetails, customerpincode: e.target.value })}
-                  className={`border ${formErrors.customerpincode ? 'border-red-500' : 'border-gray-300'} p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200`}
+                  className={`invoice-input ${formErrors.customerpincode ? 'invoice-input-error' : ''}`}
                   required
                 />
                 {formErrors.customerpincode && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.customerpincode}</p>
+                  <p className="invoice-error-message">{formErrors.customerpincode}</p>
                 )}
               </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Invoice Date
-              </label>
-              <input
-                type="date"
-                value={invoiceDetails.date}
-                onChange={(e) => setInvoiceDetails({ ...invoiceDetails, date: e.target.value })}
-                className="border border-gray-300 p-3 rounded-lg w-full md:w-1/3 focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
-              />
+              
+              <div className="invoice-form-group">
+                <label className="invoice-label">Invoice Date</label>
+                <input
+                  type="date"
+                  value={invoiceDetails.date}
+                  onChange={(e) => setInvoiceDetails({ ...invoiceDetails, date: e.target.value })}
+                  className="invoice-input date-input"
+                />
+              </div>
             </div>
           </div>
+          
           {/* Items Table */}
-          <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          <div className="invoice-section">
+            <h3 className="invoice-section-title">
+              <svg className="section-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
               </svg>
               Product Details
             </h3>
             
             {formErrors.items && (
-              <div className="mb-4 bg-red-50 p-3 rounded-lg border border-red-200">
-                <p className="text-red-600 text-sm">{formErrors.items}</p>
+              <div className="invoice-error-banner">
+                <p>{formErrors.items}</p>
               </div>
             )}
             
             {formErrors.stock && (
-              <div className="mb-4 bg-red-50 p-3 rounded-lg border border-red-200">
-                <p className="text-red-600 text-sm">{formErrors.stock}</p>
+              <div className="invoice-error-banner">
+                <p>{formErrors.stock}</p>
               </div>
             )}
             
-            <div className="overflow-x-auto rounded-lg shadow">
-              <table className="w-full">
+            <div className="invoice-table-wrapper">
+              <table className="invoice-items-table">
                 <thead>
-                  <tr className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
-                    <th className="px-4 py-3 text-left text-sm font-medium">Product</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Quantity</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Price</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Discount (%)</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">GST (%)</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Net Amount</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Action</th>
+                  <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Discount (%)</th>
+                    <th>GST (%)</th>
+                    <th>Net Amount</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-blue-50'}>
-                      <td className="px-4 py-3 border-t border-gray-200">
+                    <tr key={index} className={index % 2 === 0 ? 'even-row' : 'odd-row'}>
+                      <td>
                         <select
                           value={item.productid || ''}
                           onChange={(e) => handleProductChange(index, e.target.value)}
-                          className="border border-gray-300 p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                          className="invoice-select"
                           required
                         >
                           <option value="">Select Product</option>
@@ -605,133 +593,125 @@ const Invoiceform = () => {
                           ))}
                         </select>
                       </td>
-                      <td className="px-4 py-3 border-t border-gray-200">
-                        <div>
+                      <td>
+                        <div className="quantity-container">
                           <input
                             type="number"
                             step="0.01"
                             min="0.01"
                             value={item.quantity}
                             onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                            className={`border ${stockErrors[index] ? 'border-red-500' : 'border-gray-300'} p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent`}
+                            className={`invoice-input ${stockErrors[index] ? 'invoice-input-error' : ''}`}
                           />
                           {stockErrors[index] && (
-                            <p className="text-red-500 text-xs mt-1">{stockErrors[index]}</p>
+                            <p className="invoice-error-message stock-error">{stockErrors[index]}</p>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 border-t border-gray-200">
+                      <td>
                         <input
                           type="number"
                           step="0.01"
                           value={item.unitprice}
                           onChange={(e) => handleItemChange(index, 'unitprice', e.target.value)}
-                          className={`border border-gray-300 p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent ${item.productid ? 'bg-gray-100' : ''}`}
+                          className={`invoice-input ${item.productid ? 'readonly-input' : ''}`}
                           readOnly={!!item.productid}
                         />
                       </td>
-                      <td className="px-4 py-3 border-t border-gray-200">
+                      <td>
                         <input
                           type="number"
                           min="0"
                           max="100"
                           value={item.discount}
                           onChange={(e) => handleItemChange(index, 'discount', e.target.value)}
-                          className="border border-gray-300 p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+                          className="invoice-input"
                         />
                       </td>
-                      <td className="px-4 py-3 border-t border-gray-200">
+                      <td>
                         <input
                           type="number"
                           min="0"
                           value={item.gstpercent}
                           onChange={(e) => handleItemChange(index, 'gstpercent', e.target.value)}
-                          className={`border border-gray-300 p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-400 focus:border-transparent ${item.productid ? 'bg-gray-100' : ''}`}
+                          className={`invoice-input ${item.productid ? 'readonly-input' : ''}`}
                           readOnly={!!item.productid}
                         />
                       </td>
-                      <td className="px-4 py-3 border-t border-gray-200 font-medium text-blue-800">
+                      <td className="net-amount-cell">
                         ₹{parseFloat(item.netamount).toFixed(2)}
                       </td>
-                      <td className="px-4 py-3 border-t border-gray-200">
+                      <td>
                         <button
                           onClick={() => removeRow(index)}
-                          className="bg-red-100 text-red-600 px-3 py-1 rounded-lg hover:bg-red-200 transition duration-200 flex items-center"
+                          className="remove-item-btn"
                           disabled={items.length === 1}
+                          title="Remove item"
                         >
-<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                           </svg>
-                           <span className="ml-1">Remove</span>
-                         </button>
-                       </td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
-             </div>
-             
-             <div className="mt-4">
-               <button
-                 onClick={addRow}
-                 className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-200 transition duration-200 flex items-center"
-               >
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                 </svg>
-                 Add More Items
-               </button>
-             </div>
-           </div>
-           
-           {/* Invoice Totals */}
-           <div className="p-6">
-             <div className="bg-blue-50 p-5 rounded-lg border border-blue-100 ml-auto md:w-2/5">
-               <h3 className="text-lg font-medium text-gray-900 mb-4 border-b border-blue-200 pb-2">
-                 Invoice Summary
-               </h3>
-               <div className="space-y-3">
-                 <div className="flex justify-between">
-                   <span className="text-gray-600">Subtotal:</span>
-                   <span className="text-gray-800 font-medium">₹{parseFloat(invoiceDetails.subtotal).toFixed(2)}</span>
-                 </div>
-                 <div className="flex justify-between">
-                   <span className="text-gray-600">Discount:</span>
-                   <span className="text-green-600 font-medium">-₹{parseFloat(invoiceDetails.totaldiscount).toFixed(2)}</span>
-                 </div>
-                 <div className="flex justify-between">
-                   <span className="text-gray-600">GST:</span>
-                   <span className="text-gray-800 font-medium">₹{parseFloat(invoiceDetails.totalgst).toFixed(2)}</span>
-                 </div>
-                 <div className="flex justify-between pt-3 border-t border-blue-200">
-                   <span className="text-gray-800 font-bold">Grand Total:</span>
-                   <span className="text-blue-700 font-bold text-xl">₹{parseFloat(invoiceDetails.grandtotal).toFixed(2)}</span>
-                 </div>
-               </div>
-             </div>
-           </div>
-           
-           {/* Action Buttons */}
-           <div className="bg-gray-50 px-6 py-4 flex justify-end space-x-4">
-             <button
-               onClick={handleback}
-               className="bg-white text-gray-700 px-6 py-3 rounded-lg shadow-md hover:bg-gray-100 border border-gray-300 transition duration-200"
-             >
-               Cancel
-             </button>
-             <button
-               onClick={handleSubmit}
-               className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:from-blue-700 hover:to-indigo-700 transition duration-200 flex items-center"
-             >
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-               </svg>
-               {isEdit ? 'Update Invoice' : 'Save Invoice'}
-             </button>
-           </div>
-         </div>
-       </div>
-     </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"></path>
+                          </svg>
+                          <span>Remove</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            
+            <div className="add-item-container">
+              <button onClick={addRow} className="add-item-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Add More Items
+              </button>
+            </div>
+          </div>
+          
+          {/* Invoice Totals */}
+          <div className="invoice-section totals-section">
+            <div className="invoice-totals-panel">
+              <h3 className="invoice-totals-title">Invoice Summary</h3>
+              <div className="invoice-totals-content">
+                <div className="invoice-totals-row">
+                  <span className="totals-label">Subtotal:</span>
+                  <span className="totals-value">₹{parseFloat(invoiceDetails.subtotal).toFixed(2)}</span>
+                </div>
+                <div className="invoice-totals-row">
+                  <span className="totals-label">Discount:</span>
+                  <span className="totals-value discount-value">-₹{parseFloat(invoiceDetails.totaldiscount).toFixed(2)}</span>
+                </div>
+                <div className="invoice-totals-row">
+                  <span className="totals-label">GST:</span>
+                  <span className="totals-value">₹{parseFloat(invoiceDetails.totalgst).toFixed(2)}</span>
+                </div>
+                <div className="invoice-totals-row grand-total-row">
+                  <span className="grand-total-label">Grand Total:</span>
+                  <span className="grand-total-value">₹{parseFloat(invoiceDetails.grandtotal).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="invoice-actions-footer">
+            <button onClick={handleback} className="cancel-btn">
+              Cancel
+            </button>
+            <button onClick={handleSubmit} className="save-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              {isEdit ? 'Update Invoice' : 'Save Invoice'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
