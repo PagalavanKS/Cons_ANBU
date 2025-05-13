@@ -19,14 +19,14 @@ app.use(cors({
 
 app.use(express.json());
 
-// Serve PDFs
-app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
-
-// API routes
+// API routes - make sure these come before static file handling
 app.use('/api', route);
 app.use('/api/products', proroute);
 
-// Serve assets from dist folder inside server
+// Serve PDFs
+app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
+
+// Serve assets from dist folder inside server with proper MIME types
 const distPath = path.join(__dirname, 'dist');
 console.log(`Looking for static files in: ${distPath}`);
 
@@ -34,10 +34,45 @@ console.log(`Looking for static files in: ${distPath}`);
 if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html'))) {
   console.log('Found client files in server/dist directory');
   
-  // Serve all static files from the dist directory
-  app.use(express.static(distPath));
+  // Set proper MIME types for common web files
+  app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      } else if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      } else if (filePath.endsWith('.html')) {
+        res.setHeader('Content-Type', 'text/html');
+      } else if (filePath.endsWith('.json')) {
+        res.setHeader('Content-Type', 'application/json');
+      } else if (filePath.endsWith('.png')) {
+        res.setHeader('Content-Type', 'image/png');
+      } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+        res.setHeader('Content-Type', 'image/jpeg');
+      } else if (filePath.endsWith('.svg')) {
+        res.setHeader('Content-Type', 'image/svg+xml');
+      } else if (filePath.endsWith('.ico')) {
+        res.setHeader('Content-Type', 'image/x-icon');
+      }
+    }
+  }));
+  
+  // Explicitly serve the assets directory with proper MIME types
+  const assetsPath = path.join(distPath, 'assets');
+  if (fs.existsSync(assetsPath)) {
+    app.use('/assets', express.static(assetsPath, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        } else if (filePath.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        }
+      }
+    }));
+  }
   
   // Serve index.html for any paths that don't match API routes
+  // This must be the LAST route handler
   app.get('*', (req, res) => {
     console.log(`Serving index.html for path: ${req.path}`);
     res.sendFile(path.join(distPath, 'index.html'));
