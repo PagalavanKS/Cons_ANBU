@@ -1,0 +1,19 @@
+{
+  "name": "anbu-printing-press",
+  "version": "1.0.0",
+  "description": "Anbu Printing Press Management System",
+  "scripts": {
+    "install-client": "cd client && npm install",
+    "install-server": "cd server && npm install",
+    "install": "npm run install-client && npm run install-server",
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build-client": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "deploy": "npm run install && npm run build-client && npm start"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

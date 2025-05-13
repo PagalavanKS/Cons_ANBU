@@ -20,6 +20,13 @@ export default defineConfig({
   build: {
     cssCodeSplit: true,
     sourcemap: true,
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   resolve: {
     alias: {
