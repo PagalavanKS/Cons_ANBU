@@ -7,19 +7,32 @@ console.log('Starting build process...');
 // Install Chrome for Puppeteer in production
 if (process.env.NODE_ENV === 'production') {
   try {
-    console.log('Checking for Chromium...');
+    console.log('Checking for system Chromium...');
     
     // Check if chromium is already installed
+    let chromiumExists = false;
     try {
-      execSync('which chromium-browser || which chromium || which chrome', { stdio: 'inherit' });
-      console.log('Chromium is already installed');
+      const result = execSync('which chromium-browser || which chromium || which google-chrome').toString().trim();
+      if (result) {
+        chromiumExists = true;
+        console.log(`System browser found at: ${result}`);
+      }
     } catch (error) {
-      console.log('Installing Chromium...');
-      execSync('apt-get update && apt-get install -y chromium-browser', { stdio: 'inherit' });
-      console.log('Chromium browser installation completed');
+      console.log('No system Chromium browser found, will install one');
+    }
+    
+    if (!chromiumExists) {
+      try {
+        console.log('Installing Chromium browser...');
+        execSync('apt-get update && apt-get install -y chromium-browser', { stdio: 'inherit' });
+        console.log('Chromium browser installation completed');
+      } catch (installError) {
+        console.warn('Warning: Could not install Chromium browser:', installError.message);
+        console.log('Will try to use Puppeteer bundled Chromium instead');
+      }
     }
   } catch (error) {
-    console.warn('Warning: Could not install Chrome. Will use Puppeteer bundled Chromium:', error.message);
+    console.warn('Warning during browser setup:', error.message);
   }
 }
 

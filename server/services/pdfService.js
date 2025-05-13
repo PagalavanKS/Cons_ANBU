@@ -30,7 +30,7 @@ async function generatePdf(invoice) {
     console.log(`Environment is ${isProduction ? 'production' : 'development'}`);
     
     const options = {
-      headless: true,
+      headless: 'new',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
@@ -44,24 +44,9 @@ async function generatePdf(invoice) {
     };
     
     // In Render, we need to use a specific executable path if available
-    if (isProduction) {
-      try {
-        // Use chromium installed by the system if available (usually in Render)
-        if (fs.existsSync('/usr/bin/chromium-browser')) {
-          options.executablePath = '/usr/bin/chromium-browser';
-          console.log("Using system chromium at /usr/bin/chromium-browser");
-        } else if (fs.existsSync('/usr/bin/chromium')) {
-          options.executablePath = '/usr/bin/chromium';
-          console.log("Using system chromium at /usr/bin/chromium");
-        } else if (fs.existsSync('/usr/bin/chrome')) {
-          options.executablePath = '/usr/bin/chrome';
-          console.log("Using system chrome at /usr/bin/chrome");
-        } else {
-          console.log("No system chrome found, using bundled browser");
-        }
-      } catch (error) {
-        console.warn("Error checking for browser executable:", error.message);
-      }
+    if (isProduction && process.env.PUPPETEER_EXECUTABLE_PATH) {
+      options.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+      console.log(`Using specified executable path: ${options.executablePath}`);
     }
 
     console.log("Launching browser with options:", JSON.stringify(options));

@@ -14,9 +14,26 @@ process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = process.env.NODE_ENV === 'product
 
 // Configure Puppeteer environment variables for production
 if (process.env.NODE_ENV === 'production') {
-  // Set environment variables for Puppeteer in production
-  process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = 'true';
-  // We'll use system chromium in production, so we don't need to download it with Puppeteer
+  // Check for chromium browser path and set it if exists
+  const possibleBrowserPaths = [
+    '/usr/bin/chromium-browser',
+    '/usr/bin/chromium',
+    '/usr/bin/chrome',
+    '/usr/bin/google-chrome'
+  ];
+  
+  for (const browserPath of possibleBrowserPaths) {
+    if (fs.existsSync(browserPath)) {
+      process.env.PUPPETEER_EXECUTABLE_PATH = browserPath;
+      console.log(`Setting PUPPETEER_EXECUTABLE_PATH to ${browserPath}`);
+      break;
+    }
+  }
+  
+  // Create cache directory for Puppeteer
+  const puppeteerCacheDir = '/tmp/puppeteer-cache';
+  fs.ensureDirSync(puppeteerCacheDir);
+  process.env.PUPPETEER_CACHE_DIR = puppeteerCacheDir;
 }
 
 // Use environment variables for MongoDB connection
@@ -64,18 +81,9 @@ app.listen(port, async () => {
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Puppeteer Cache Dir: ${process.env.PUPPETEER_CACHE_DIR || 'default'}`);
   
-  // Log browser paths that might be available
-  const possibleBrowserPaths = [
-    '/usr/bin/chromium-browser',
-    '/usr/bin/chromium',
-    '/usr/bin/chrome',
-    '/usr/bin/google-chrome'
-  ];
-  
-  for (const browserPath of possibleBrowserPaths) {
-    const exists = fs.existsSync(browserPath);
-    console.log(`Browser path ${browserPath}: ${exists ? 'Exists' : 'Not found'}`);
-  }
+  // Log Puppeteer settings
+  console.log(`Puppeteer executable path: ${process.env.PUPPETEER_EXECUTABLE_PATH || 'default bundled chromium'}`);
+  console.log(`Puppeteer cache directory: ${process.env.PUPPETEER_CACHE_DIR || 'default'}`);
   
   try {
     await connectdb(mongoUrl);
