@@ -26,42 +26,24 @@ app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 app.use('/api', route);
 app.use('/api/products', proroute);
 
-// Define paths to check for client files
-const possibleClientPaths = [
-  path.join(__dirname, 'public'),          // First priority - copied during build
-  path.join(__dirname, '../client/dist')   // Second priority - local development
-];
+// Serve assets from dist folder inside server
+const distPath = path.join(__dirname, 'dist');
+console.log(`Looking for static files in: ${distPath}`);
 
-// Find first valid client path
-let clientPath = null;
-for (const potentialPath of possibleClientPaths) {
-  console.log(`Checking for client files in: ${potentialPath}`);
-  if (fs.existsSync(potentialPath)) {
-    try {
-      // Also check if index.html exists in this path
-      if (fs.existsSync(path.join(potentialPath, 'index.html'))) {
-        clientPath = potentialPath;
-        console.log(`Found client files at: ${clientPath}`);
-        break;
-      }
-    } catch (err) {
-      console.log(`Error checking path ${potentialPath}:`, err);
-    }
-  }
-}
-
-if (clientPath) {
-  console.log(`Serving static files from: ${clientPath}`);
+// Check if dist directory exists in server folder
+if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html'))) {
+  console.log('Found client files in server/dist directory');
   
-  // Serve static files
-  app.use(express.static(clientPath));
+  // Serve all static files from the dist directory
+  app.use(express.static(distPath));
   
-  // Serve index.html for any non-API routes
+  // Serve index.html for any paths that don't match API routes
   app.get('*', (req, res) => {
-    res.sendFile(path.join(clientPath, 'index.html'));
+    console.log(`Serving index.html for path: ${req.path}`);
+    res.sendFile(path.join(distPath, 'index.html'));
   });
 } else {
-  console.log('No client build found, running in API-only mode');
+  console.log('No client build found in server/dist, running in API-only mode');
   
   // If no client build found, serve a simple response
   app.get('/', (req, res) => {
