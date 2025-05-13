@@ -11,7 +11,9 @@ const mongoUrl = "mongodb+srv://pagalavanks22cse:djbdqVHcJjc1fArv@cluster0.fczos
 
 const port = 5000;
 
-app.use(cors());
+app.use(cors({
+  origin:['*']
+}));
 app.use(express.json());
 app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 
