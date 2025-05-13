@@ -25,40 +25,58 @@ async function generatePdf(invoice) {
     const filename = `invoice_${invoice._id}_${Date.now()}.pdf`;
     const pdfPath = path.join(PDF_DIR, filename);
 
-    // Configure browser launch options for different environments
+    // Configure browser launch options
     const isProduction = process.env.NODE_ENV === 'production';
+    console.log(`Environment is ${isProduction ? 'production' : 'development'}`);
+    
     const options = {
-      headless: 'new',
+      headless: true,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
         '--disable-gpu',
         '--window-size=1920x1080',
       ]
     };
     
-    // In production (Render), we need specific configurations
+    // In Render, we need to use a specific executable path if available
     if (isProduction) {
-      // Use the bundled Chromium executable if available
-      console.log("Using production Puppeteer configuration");
-      
-      // Log the puppeteer version and executable path for debugging
-      const puppeteerInfo = await getPuppeteerInfo();
-      console.log("Puppeteer info:", puppeteerInfo);
+      try {
+        // Use chromium installed by the system if available (usually in Render)
+        if (fs.existsSync('/usr/bin/chromium-browser')) {
+          options.executablePath = '/usr/bin/chromium-browser';
+          console.log("Using system chromium at /usr/bin/chromium-browser");
+        } else if (fs.existsSync('/usr/bin/chromium')) {
+          options.executablePath = '/usr/bin/chromium';
+          console.log("Using system chromium at /usr/bin/chromium");
+        } else if (fs.existsSync('/usr/bin/chrome')) {
+          options.executablePath = '/usr/bin/chrome';
+          console.log("Using system chrome at /usr/bin/chrome");
+        } else {
+          console.log("No system chrome found, using bundled browser");
+        }
+      } catch (error) {
+        console.warn("Error checking for browser executable:", error.message);
+      }
     }
-    
-    // Launch browser
+
     console.log("Launching browser with options:", JSON.stringify(options));
+    
+    // Launch browser with correctly passed options
     browser = await puppeteer.launch(options);
+    console.log("Browser launched successfully");
     
     // Create a new page
     const page = await browser.newPage();
+    console.log("Browser page created");
     
     // Set content to our HTML
-    console.log("Setting page content...");
     await page.setContent(html, { waitUntil: 'networkidle0' });
+    console.log("Content set to page");
     
     // Generate PDF
     console.log("Generating PDF...");
@@ -74,11 +92,12 @@ async function generatePdf(invoice) {
       }
     });
     
+    console.log("PDF generated successfully at:", pdfPath);
+    
     // Close the browser
     await browser.close();
     browser = null;
     
-    console.log("PDF generation completed successfully:", pdfPath);
     return `/pdfs/${filename}`;
   } catch (error) {
     console.error('PDF Generation Error:', error);
@@ -90,28 +109,6 @@ async function generatePdf(invoice) {
       }
     }
     throw new Error(`Failed to generate PDF: ${error.message}`);
-  }
-}
-
-/**
- * Get information about Puppeteer installation for debugging
- */
-async function getPuppeteerInfo() {
-  try {
-    const browserFetcher = puppeteer.createBrowserFetcher();
-    const revInfo = await browserFetcher.download(puppeteer.browserRevision);
-    
-    return {
-      version: puppeteer.version,
-      revision: puppeteer.browserRevision,
-      executablePath: revInfo?.executablePath || "Unknown",
-      exists: revInfo ? fs.existsSync(revInfo.executablePath) : false
-    };
-  } catch (error) {
-    return {
-      error: error.message,
-      version: puppeteer.version
-    };
   }
 }
 

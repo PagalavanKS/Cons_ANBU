@@ -7,9 +7,17 @@ console.log('Starting build process...');
 // Install Chrome for Puppeteer in production
 if (process.env.NODE_ENV === 'production') {
   try {
-    console.log('Installing Chrome for Puppeteer...');
-    execSync('apt-get update && apt-get install -y chromium', { stdio: 'inherit' });
-    console.log('Chrome installation completed');
+    console.log('Checking for Chromium...');
+    
+    // Check if chromium is already installed
+    try {
+      execSync('which chromium-browser || which chromium || which chrome', { stdio: 'inherit' });
+      console.log('Chromium is already installed');
+    } catch (error) {
+      console.log('Installing Chromium...');
+      execSync('apt-get update && apt-get install -y chromium-browser', { stdio: 'inherit' });
+      console.log('Chromium browser installation completed');
+    }
   } catch (error) {
     console.warn('Warning: Could not install Chrome. Will use Puppeteer bundled Chromium:', error.message);
   }
