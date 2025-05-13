@@ -99,7 +99,7 @@ router.get('/invoices/:id/pdf', async (req, res) => {
       return res.status(404).json({ error: 'Invoice not found' });
     }
     
-    // Convert some Mongoose document to plain object
+    // Convert mongoose document to plain object
     const invoiceData = invoice.toObject();
     
     // Format currency values
@@ -117,9 +117,11 @@ router.get('/invoices/:id/pdf', async (req, res) => {
     invoiceData.formattedDate = new Date(invoice.date).toLocaleDateString('en-IN');
     
     // Generate PDF
+    console.log("Starting PDF generation for invoice:", invoiceData._id);
     const pdfPath = await generatePdf(invoiceData);
     
     // Send response with the PDF path
+    console.log("Returning PDF path:", pdfPath);
     res.json({ pdfPath });
   } catch (error) {
     console.error('Error generating PDF:', error);

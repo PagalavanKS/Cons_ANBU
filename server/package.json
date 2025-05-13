@@ -7,7 +7,7 @@
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm install && node build-client.js",
-    "build-client": "node build-client.js"
+    "postinstall": "puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",

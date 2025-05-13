@@ -8,13 +8,22 @@ const route = require("./routes/invoiceRoute.js");
 const proroute = require("./routes/productRoute.js");
 require('dotenv').config();
 
+// Configure Puppeteer environment variables for Render deployment
+process.env.PUPPETEER_CACHE_DIR = '/tmp/puppeteer-cache';
+process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = process.env.NODE_ENV === 'production' ? 'true' : 'false';
+
 // Use environment variables for MongoDB connection
 const mongoUrl = process.env.MONGODB_URI || "mongodb+srv://pagalavanks22cse:djbdqVHcJjc1fArv@cluster0.fczosvo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 const port = process.env.PORT || 5000;
 
-// Ensure PDF directory exists
+// Ensure directories exist
 const PDF_DIR = path.join(__dirname, 'pdfs');
 fs.ensureDirSync(PDF_DIR);
+
+// Create cache directory for Puppeteer if in production
+if (process.env.NODE_ENV === 'production') {
+  fs.ensureDirSync('/tmp/puppeteer-cache');
+}
 
 // CORS configuration
 app.use(cors({
@@ -45,6 +54,9 @@ app.get('*', (req, res) => {
 // Start server
 app.listen(port, async () => {
   console.log(`Server running at http://localhost:${port}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Puppeteer Cache Dir: ${process.env.PUPPETEER_CACHE_DIR || 'default'}`);
+  
   try {
     await connectdb(mongoUrl);
     console.log("Database connected successfully");
