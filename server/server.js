@@ -28,16 +28,25 @@ app.use('/api/products', proroute);
 
 // Define paths to check for client files
 const possibleClientPaths = [
-  path.join(__dirname, '../client/dist'),  // Standard Vite output
-  path.join(__dirname, 'public')           // Copied during build process
+  path.join(__dirname, 'public'),          // First priority - copied during build
+  path.join(__dirname, '../client/dist')   // Second priority - local development
 ];
 
 // Find first valid client path
 let clientPath = null;
-for (const path of possibleClientPaths) {
-  if (fs.existsSync(path)) {
-    clientPath = path;
-    break;
+for (const potentialPath of possibleClientPaths) {
+  console.log(`Checking for client files in: ${potentialPath}`);
+  if (fs.existsSync(potentialPath)) {
+    try {
+      // Also check if index.html exists in this path
+      if (fs.existsSync(path.join(potentialPath, 'index.html'))) {
+        clientPath = potentialPath;
+        console.log(`Found client files at: ${clientPath}`);
+        break;
+      }
+    } catch (err) {
+      console.log(`Error checking path ${potentialPath}:`, err);
+    }
   }
 }
 
