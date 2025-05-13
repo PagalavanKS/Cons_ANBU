@@ -1,19 +1,17 @@
 {
-  "name": "anbu-printing-press",
+  "name": "chat-app",
   "version": "1.0.0",
-  "description": "Anbu Printing Press Management System",
+  "main": "index.js",
   "scripts": {
-    "install-client": "cd client && npm install",
-    "install-server": "cd server && npm install",
-    "install": "npm run install-client && npm run install-server",
-    "client": "cd client && npm run dev",
-    "server": "cd server && npm run dev",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build-client": "cd client && npm run build",
-    "start": "cd server && npm start",
-    "deploy": "npm run install && npm run build-client && npm start"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": " node server/server.js ",
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "chat-app": "file:"
   }
 }
