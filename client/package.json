@@ -10,15 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
     "axios": "^1.8.1",
+    "chat-app": "file:..",
     "dotenv": "^16.4.7",
     "lucide-react": "^0.469.0",
+    "postcss": "^8.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-feather": "^2.0.10",
     "react-router-dom": "^7.2.0",
-    "postcss": "^8.5.3",
-    "autoprefixer": "^10.4.20",
     "tailwindcss": "^3.3.0"
   },
   "devDependencies": {

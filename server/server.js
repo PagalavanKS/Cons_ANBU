@@ -19,48 +19,51 @@ app.use(cors({
 
 app.use(express.json());
 
-// API routes - make sure these come before static file handling
-app.use('/api', route);
-app.use('/api/products', proroute);
-
 // Serve PDFs
 app.use('/pdfs', express.static(path.join(__dirname, 'pdfs')));
 
-// Serve assets from dist folder inside server with proper MIME types
-const distPath = path.join(__dirname, 'dist');
-console.log(`Looking for static files in: ${distPath}`);
+// API routes - define these BEFORE the static file middleware
+app.use('/api', route);
+app.use('/api/products', proroute);
 
-// Check if dist directory exists in server folder
-if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html'))) {
-  console.log('Found client files in server/dist directory');
+// Check for client dist files in the parent directory
+const clientDistPath = path.join(__dirname, '../client/dist');
+console.log(`Looking for client files at: ${clientDistPath}`);
+
+if (fs.existsSync(clientDistPath) && fs.existsSync(path.join(clientDistPath, 'index.html'))) {
+  console.log('Found client files in ../client/dist');
   
-  // Set proper MIME types for common web files
-  app.use(express.static(distPath, {
+  // Correctly serve static files from parent directory's client/dist folder
+  app.use(express.static(clientDistPath));
+  
+  // Serve static files from assets folder with correct MIME types
+  app.use('/assets', express.static(path.join(clientDistPath, 'assets'), {
     setHeaders: (res, filePath) => {
       if (filePath.endsWith('.js')) {
         res.setHeader('Content-Type', 'application/javascript');
       } else if (filePath.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css');
-      } else if (filePath.endsWith('.html')) {
-        res.setHeader('Content-Type', 'text/html');
-      } else if (filePath.endsWith('.json')) {
-        res.setHeader('Content-Type', 'application/json');
-      } else if (filePath.endsWith('.png')) {
-        res.setHeader('Content-Type', 'image/png');
-      } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
-        res.setHeader('Content-Type', 'image/jpeg');
-      } else if (filePath.endsWith('.svg')) {
-        res.setHeader('Content-Type', 'image/svg+xml');
-      } else if (filePath.endsWith('.ico')) {
-        res.setHeader('Content-Type', 'image/x-icon');
       }
     }
   }));
   
-  // Explicitly serve the assets directory with proper MIME types
-  const assetsPath = path.join(distPath, 'assets');
-  if (fs.existsSync(assetsPath)) {
-    app.use('/assets', express.static(assetsPath, {
+  // This must be AFTER the API routes and AFTER the static middleware
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+} else {
+  console.log('Client files not found at ../client/dist');
+  
+  // Check if dist was accidentally put in the server directory itself
+  const serverDistPath = path.join(__dirname, 'dist');
+  
+  if (fs.existsSync(serverDistPath) && fs.existsSync(path.join(serverDistPath, 'index.html'))) {
+    console.log('Found client files in server/dist');
+    
+    // Serve from the server/dist directory instead
+    app.use(express.static(serverDistPath));
+    
+    app.use('/assets', express.static(path.join(serverDistPath, 'assets'), {
       setHeaders: (res, filePath) => {
         if (filePath.endsWith('.js')) {
           res.setHeader('Content-Type', 'application/javascript');
@@ -69,28 +72,22 @@ if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html')))
         }
       }
     }));
-  }
-  
-  // Serve index.html for any paths that don't match API routes
-  // This must be the LAST route handler
-  app.get('*', (req, res) => {
-    console.log(`Serving index.html for path: ${req.path}`);
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-} else {
-  console.log('No client build found in server/dist, running in API-only mode');
-  
-  // If no client build found, serve a simple response
-  app.get('/', (req, res) => {
-    res.json({
-      message: "Anbu Printing Press API",
-      status: "Running (API Only Mode)",
-      endpoints: [
-        "/api/invoices",
-        "/api/products"
-      ]
+    
+    // This must be AFTER the API routes
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(serverDistPath, 'index.html'));
     });
-  });
+  } else {
+    console.log('Client files not found in server/dist either');
+    
+    // Fallback to API-only mode
+    app.get('/', (req, res) => {
+      res.json({
+        message: "API server running. Client files not found.",
+        status: "API Only Mode"
+      });
+    });
+  }
 }
 
 // Start server

@@ -14,6 +14,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "chat-app": "file:..",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -21,6 +22,7 @@
     "handlebars": "^4.7.8",
     "html-pdf": "^3.0.1",
     "mongoose": "^8.11.0",
+    "path": "^0.12.7",
     "pdfkit": "^0.16.0",
     "puppeteer": "^24.4.0"
   },
