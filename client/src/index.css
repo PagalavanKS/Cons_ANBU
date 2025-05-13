@@ -2,17 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-    padding: 0px;
-    margin: 0px;
-    font-family:'Poppins';
+:root {
+  --primary: #2563eb;
+  --secondary: #1e40af;
 }
-.active{
-   
-  background-color: white;
-  color:black;
-  border-radius: 35px;
-  padding: 10px;
-  /* border-width: 10vw; */
 
+* {
+  padding: 0px;
+  margin: 0px;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Fix active class styles for navigation */
+.active {
+  background-color: white;
+  color: #1e3a8a !important; /* Important to override Tailwind */
+  border-radius: 0.75rem;
+  padding: 0.875rem;
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+/* Ensure the sidebar has the proper background */
+.sidebar {
+  background: linear-gradient(to bottom, #1a202c, #2d3748, #4a5568);
+}
+
+/* Allow scrolling for long content */
+body {
+  overflow-x: hidden;
 }

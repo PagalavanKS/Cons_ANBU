@@ -1,42 +1,42 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
-import Home from "./pages/Home";
-import Invoicelist from "./components/Invoicelist";
-import Stocks from "./components/Stocks";
-import Invoiceform from "./components/Invoiceform";
-import ProductManagement from "./components/Productsform";
-import LoadingScreen from "./components/LoadingScreen";
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './index.css'; // Import Tailwind CSS
+import './App.css'; // Import backup CSS
+import Home from './pages/Home';
+import Invoicelist from './components/Invoicelist';
+import Invoiceform from './components/Invoiceform';
+import ProductManagement from './components/Productsform';
+import Stocks from './components/Stocks';
+import LoadingScreen from './components/LoadingScreen';
 
-const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
+function App() {
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Simulate loading time
     const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 4000);
-
+      setLoading(false);
+    }, 1500);
+    
     return () => clearTimeout(timer);
   }, []);
 
-  if (isLoading) {
+  if (loading) {
     return <LoadingScreen />;
   }
 
   return (
-    <div>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/list" element={<Invoicelist/>}/>
-          <Route path="/stock" element={<Stocks/>}/>
-          <Route path='/form' element={<Invoiceform/>}/>
-          <Route path="/form/:id" element={<Invoiceform/>} />
-          <Route path="/products" element={<ProductManagement/>}/>
-          <Route path="/products/:id" element={<ProductManagement/>}/>
-        </Routes>
-      </Router>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/list" element={<Invoicelist />} />
+        <Route path="/form" element={<Invoiceform />} />
+        <Route path="/form/:id" element={<Invoiceform />} />
+        <Route path="/products" element={<ProductManagement />} />
+        <Route path="/stock" element={<Stocks />} />
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;

@@ -1,0 +1,61 @@
+/* This ensures that if Tailwind fails, we at least have some minimal styling */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.sidebar {
+  width: 18vw;
+  background: linear-gradient(to bottom, #1a202c, #2d3748, #4a5568);
+  min-height: 100vh;
+  color: white;
+  padding: 1rem;
+}
+
+.content {
+  flex: 1;
+  padding: 1rem;
+}
+
+.shadow-xl {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 1rem;
+  text-align: left;
+}
+
+td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.bg-blue-600 {
+  background-color: #2563eb;
+  color: white;
+}
+
+.bg-red-500 {
+  background-color: #ef4444;
+  color: white;
+}
