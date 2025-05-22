@@ -7,7 +7,7 @@ const Sidebar = () => {
         { path: '/', title: 'Dashboard', icon: HomeIcon },
         { path: '/list', title: 'Sales Invoice', icon: FileText },
         { path: '/products', title: 'Products', icon: Package },
-        { path: '/stock', title: 'Stocks', icon: BarChart2 }
+     { path: '/stock', title: 'Stocks', icon: BarChart2 }
     ];
 
     return (

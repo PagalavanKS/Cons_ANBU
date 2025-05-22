@@ -1,3 +1,5 @@
+// WARNING: This file is deprecated. Please use invoiceModel.js instead.
+
 const mongoose = require('mongoose');
 
 const invoiceSchema = new mongoose.Schema({

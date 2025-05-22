@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs-extra');
 const path = require('path');
-const Invoice = require('../models/Invoice');
+const Invoice = require('../models/invoiceModel');
+const Product = require('../models/productmodel'); // Ensure correct casing in the import
 const { generatePdf } = require('../services/pdfService');
 
 const router = express.Router();
@@ -39,7 +40,38 @@ router.get('/invoices/:id', async (req, res) => {
 // Route to create a new invoice
 router.post('/invoices', async (req, res) => {
   try {
-    const invoice = new Invoice(req.body);
+    const invoiceData = req.body;
+    console.log(invoiceData)
+    
+    // Update product stock when creating invoice
+    if (Array.isArray(invoiceData.items) && invoiceData.items.length > 0) {
+      try {
+        // Use Promise.all to ensure all product updates complete before saving the invoice
+        await Promise.all(invoiceData.items.map(async (item) => {
+          if (!item.productid) return; // Skip if no product ID
+          
+          const productId = item.productid;
+          const quantity = Number(item.quantity || 0);
+          
+          // Find the product and update its stock
+          const product = await Product.findByIdAndUpdate(
+            productId,
+            { $inc: { availablestock: -quantity } }, // Decrement the stock by quantity
+            { new: true } // Return the updated document
+          );
+          
+          if (!product) {
+            throw new Error(`Product with ID ${productId} not found`);
+          }
+          
+          console.log(product);
+        }));
+      } catch (stockError) {
+        return res.status(400).json({ error: stockError.message });
+      }
+    }
+    
+    const invoice = new Invoice(invoiceData);
     await invoice.save();
     res.status(201).json(invoice);
   } catch (error) {
@@ -51,15 +83,62 @@ router.post('/invoices', async (req, res) => {
 // Route to update an invoice
 router.put('/invoices/:id', async (req, res) => {
   try {
-    const invoice = await Invoice.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-    
-    if (!invoice) {
+    // Get the old invoice to compare items
+    const oldInvoice = await Invoice.findById(req.params.id);
+    if (!oldInvoice) {
       return res.status(404).json({ error: 'Invoice not found' });
     }
+    
+    const invoiceData = req.body;
+    
+    // Update product stock if items have changed
+    if (Array.isArray(invoiceData.items) && invoiceData.items.length > 0) {
+      try {
+        // First restore old quantities to products
+        if (Array.isArray(oldInvoice.items) && oldInvoice.items.length > 0) {
+          await Promise.all(oldInvoice.items.map(async (item) => {
+            if (!item.productid) return; // Skip if no product ID
+            
+            const productId = item.productid;
+            const quantity = Number(item.quantity || 0);
+            
+            // Add back the previously deducted quantity
+            await Product.findByIdAndUpdate(
+              productId,
+              { $inc: { availablestock: quantity } },
+              { new: true }
+            );
+          }));
+        }
+        
+        // Then deduct new quantities
+        await Promise.all(invoiceData.items.map(async (item) => {
+          if (!item.productid) return; // Skip if no product ID
+          
+          const productId = item.productid;
+          const quantity = Number(item.quantity || 0);
+          
+          // Find the product and update its stock
+          const product = await Product.findByIdAndUpdate(
+            productId,
+            { $inc: { availablestock: -quantity } }, // Decrement the stock by quantity
+            { new: true } // Return the updated document
+          );
+          
+          if (!product) {
+            throw new Error(`Product with ID ${productId} not found`);
+          }
+        }));
+      } catch (stockError) {
+        return res.status(400).json({ error: stockError.message });
+      }
+    }
+    
+    const invoice = await Invoice.findByIdAndUpdate(
+      req.params.id,
+      invoiceData,
+      { new: true, runValidators: true }
+    );
     
     res.json(invoice);
   } catch (error) {
@@ -71,12 +150,38 @@ router.put('/invoices/:id', async (req, res) => {
 // Route to delete an invoice
 router.delete('/invoices/:id', async (req, res) => {
   try {
-    const invoice = await Invoice.findByIdAndDelete(req.params.id);
+    const invoice = await Invoice.findById(req.params.id);
     
     if (!invoice) {
       return res.status(404).json({ error: 'Invoice not found' });
     }
     
+    // Restore product stock for deleted invoice
+    if (Array.isArray(invoice.items) && invoice.items.length > 0) {
+      try {
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        
+        for (const item of invoice.items) {
+          if (!item.productid) continue; // Changed from productId to productid to match schema
+          
+          const product = await Product.findById(item.productid).session(session);
+          if (product) {
+            // Restore the quantity
+            product.availablestock += Number(item.quantity || 0);
+            await product.save({ session });
+          }
+        }
+        
+        await session.commitTransaction();
+        session.endSession();
+      } catch (stockError) {
+        console.error('Error restoring stock:', stockError);
+        // Continue with deletion even if stock restoration fails
+      }
+    }
+    
+    await Invoice.findByIdAndDelete(req.params.id);
     res.json({ message: 'Invoice deleted successfully' });
   } catch (error) {
     console.error('Error deleting invoice:', error);

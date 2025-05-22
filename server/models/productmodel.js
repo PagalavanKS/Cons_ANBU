@@ -12,5 +12,6 @@ const productSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const product = mongoose.model('product', productSchema);
-module.exports = product;
+// Changed from lowercase 'product' to capitalized 'Product'
+const Product = mongoose.model('Product', productSchema);
+module.exports = Product;

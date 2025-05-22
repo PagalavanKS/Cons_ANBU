@@ -6,25 +6,20 @@ import Home from './pages/Home';
 import Invoicelist from './components/Invoicelist';
 import Invoiceform from './components/Invoiceform';
 import ProductManagement from './components/Productsform';
-import Stocks from './components/Stocks';
 import LoadingScreen from './components/LoadingScreen';
+import Stocks from './components/Stocks'; // Add this import statement
 
 function App() {
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    // Simulate loading time
     const timer = setTimeout(() => {
       setLoading(false);
     }, 1500);
-    
     return () => clearTimeout(timer);
   }, []);
-
   if (loading) {
     return <LoadingScreen />;
   }
-
   return (
     <BrowserRouter>
       <Routes>
@@ -38,5 +33,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

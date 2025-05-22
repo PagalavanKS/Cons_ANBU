@@ -128,5 +128,4 @@ const features = [
     description: "Stay ahead with AI-powered market insights and trend predictions."
   }
 ];
-
 export default Home;

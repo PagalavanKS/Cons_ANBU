@@ -1,12 +1,10 @@
 import React from 'react';
 import Sidebar from './Sidebar';
-
 const Stocks = () => {
   return (
     <div className="page-container">
         {/* Sidebar */}
         <Sidebar />
-        
         {/* Main Content */}
         <div className="main-content center-content">
             <div className="stock-card">
@@ -22,5 +20,4 @@ const Stocks = () => {
     </div>
   );
 };
-
 export default Stocks;

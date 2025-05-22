@@ -17,7 +17,6 @@ const ProductManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch all products on component mount
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -62,12 +61,11 @@ const ProductManagement = () => {
         await updateProduct(currentProductId, productData);
         alert('Product updated successfully');
       } else {
-        // Create new product
         await addProduct(productData);
         alert('Product added successfully');
       }
       
-      // Reset form and fetch updated product list
+      // Reset form and fetch updated product listx
       resetForm();
       fetchProducts();
     } catch (error) {
